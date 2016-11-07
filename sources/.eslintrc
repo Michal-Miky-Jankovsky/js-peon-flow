@@ -2,6 +2,7 @@
 	"ecmaFeatures": {
 	},
 
+	"parser": "babel-eslint",
 	"rules": {
 		// Possible Errors - http://eslint.org/docs/rules/#possible-errors
 		"use-isnan": [2],
@@ -86,7 +87,7 @@
 		"yoda": [1, "never"],
 
 		// Strict Mode - http://eslint.org/docs/rules/#strict-mode
-		"strict": [2, "function"],
+		"strict": [0, "function"],
 
 		// Variables - http://eslint.org/docs/rules/#variables
 		"no-delete-var": [2],
@@ -138,7 +139,7 @@
 		"operator-linebreak": [1, "after"],
 		"quotes": [1, "double", "avoid-escape"],
 		"quote-props": [1, "consistent-as-needed", {"keywords": true}],
-		"require-jsdoc": [1, {"require": {"FunctionDeclaration": true, "MethodDefinition": false, "ClassDeclaration": false}}],
+		"require-jsdoc": [1, {"require": {"FunctionDeclaration": false, "MethodDefinition": false, "ClassDeclaration": false}}],
 		"semi": [1],
 		"semi-spacing": [1, {"before": false, "after": true}],
 		"keyword-spacing": [1, {"before": true, "after": true}],
@@ -157,6 +158,7 @@
 		"S": true,
 		"widget": true,
 		"jasmine": true,
-		"mE": true
+		"demoProject": true,
+		"lib0001": true
 	}
 }

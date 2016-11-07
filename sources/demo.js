@@ -2,13 +2,12 @@
 	"use strict";
 
 	//@flow
-	/**
-	 * Main function
-	 */
-	demoProject.mainFunction = function () {
+	demoProject.mainFunction = function (classic: demoProject.Classic) {
 		var element = document.querySelector("#content"),
 			value: string = "value",
 			valueInt: number = 1;
+
+		console.log("Param example: ", classic.getTime());
 
 		if (element) {
 			element.innerHTML = "Hello " + lib0001.doSomething("w", "o", "r", "l", "d");
@@ -18,16 +17,10 @@
 		}
 	};
 
-	/**
-	 * Do string magic
-	 */
 	function doStringMagic(value: string): string {
 		return value + "_expanded";
 	}
 
-	/**
-	 * Do number magic
-	 */
 	function doNumberMagic(value: number): number {
 		return value * 5;
 	}
