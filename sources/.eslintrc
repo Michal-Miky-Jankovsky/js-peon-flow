@@ -22,7 +22,7 @@
 		"no-empty-character-class": [1],
 		"no-invalid-regexp": [2],
 		"no-irregular-whitespace": [2],
-		"valid-jsdoc": [1, {
+		"valid-jsdoc": [0, {
 			"requireParamDescription": false,
 			"requireReturnDescription": false,
 			"requireReturn": false

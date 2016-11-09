@@ -1,4 +1,4 @@
-/* globals require, console, exports, __dirname*/
+/* globals require, console, exports*/
 var Debugger = {};
 
 (function () {
@@ -7,16 +7,14 @@ var Debugger = {};
 	var path = require("path"),
 		baseDir = path.dirname(require.main.filename),
 		project = require(baseDir + "/project"),
-		grunt = require("grunt"),
+		exec = require("child_process").execSync,
+		fileList = require("filelist"),
 		fs = require("fs"),
 		build = false,
 		directories,
 		buildFile,
 		copyFile;
 
-
-	//Disable grunt log
-	grunt.log.muted = true;
 	//Load data
 	directories = project.directories;
 	buildFile = baseDir + "/" + project.resource + project.settings.name;
@@ -72,6 +70,37 @@ var Debugger = {};
 	};
 
 	/**
+	 * Concat files
+	 * @param {Array.<*>} list
+	 * @param {string} outputFile
+	 * @param {function} callback
+	 */
+	function concatFiles(list, outputFile, callback) {
+		var fl = new fileList.FileList(),
+			result = "",
+			data;
+
+		fl.include(list);
+
+		fl.forEach(function (file, index) {
+			data = fs.readFileSync(file, "utf8");
+			result += data;
+			if (index === fl.length() - 1) {
+				fs.writeFileSync(outputFile, result);
+				callback();
+			}
+		});
+	}
+
+	/**
+	 * Uglify file
+	 */
+	function uglifyFile() {
+		exec(baseDir + "/node_modules/.bin/uglifyjs " + project.resource + project.settings.name + " -o " + project.resource + project.settings.min);
+		writeMessage("Uglify done.");
+	}
+
+	/**
 	 * Run build
 	 * @param {boolean=} uglify
 	 * @param {boolean=} tests
@@ -99,38 +128,20 @@ var Debugger = {};
 		//delete and run build
 		fs.unlink(buildFile, function () {
 			writeMessage("Running build.");
-			try {
-				grunt.option("force", true);
-				grunt.tasks(["debug"], {
-					force: true
-				}, function () {
-					const exec = require('child_process').execSync;
 
-					exec(baseDir + '/node_modules/.bin/flow-remove-types ' + project.resource + project.settings.flow + " > " + project.resource + project.settings.name);
+			concatFiles(project.getAllSrc(), project.resource + project.settings.flow, function () {
+				writeMessage("Concat done.");
+				exec(baseDir + "/node_modules/.bin/flow-remove-types " + project.resource + project.settings.flow + " > " + project.resource + project.settings.name);
+				writeMessage("Remove flow.");
 
-					if (uglify) {
-						grunt.tasks(["min"], {
-							force: true
-						}, function () {
-							afterBuild(uglify, tests, type, filename);
-						});
-					} else if (tests) {
-						grunt.tasks(["tests"], {
-							force: true
-						}, function () {
-							afterBuild(uglify, tests, type, filename);
-						});
-					} else {
-						afterBuild(uglify, tests, type, filename);
-					}
+				uglifyFile();
+				concatFiles(project.getLessStyles(), project.resource + project.settings.less, function () {
+					writeMessage("Less done.");
+					exec(baseDir + "/node_modules/.bin/lessc " + project.resource + project.settings.less + " " + project.resource + project.settings.css);
+					afterBuild(uglify, tests, type, filename);
 				});
-
-			} catch (e) {
-				writeMessage("Build failed, running again.");
-				Debugger.runBuild(uglify, tests, type, filename);
-			}
+			});
 		});
-		//building
 		build = true;
 	};
 

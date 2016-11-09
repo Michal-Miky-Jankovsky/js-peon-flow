@@ -1,6 +1,7 @@
 /**global module*/
 // Project configuration.
 var project = {};
+
 //artifactory
 project.artifactory = "http://default:8081";
 //group id
@@ -40,9 +41,8 @@ project.settings = {
 	name: "demo.js",
 	min: "demo.min.js",
 	flow: "demo.flow.js",
-	flow_min: "demo.flow.min.js",
 	//less
-	less: [project.style + "*.less"],
+	less: "demo.less",
 	//css
 	css: "demo.css",
 	//src
@@ -70,7 +70,7 @@ project.settings = {
 //spec
 project.spec = {
 	//default
-	default: [project.tests + "**/*.js"],
+	files: [project.tests + "**/*.js"],
 
 	//coverage runner
 	runnerDefault: project.tests + "index.html"
@@ -85,8 +85,17 @@ project.demo = {
 project.getCssStyles = function () {
 	"use strict";
 
-	return [
-	];
+	return [];
+};
+
+/**
+ * Get less styles
+ * @returns {Array.<string>}
+ */
+project.getLessStyles = function () {
+	"use strict";
+
+	return [project.style + "*.less"];
 };
 /**
  * get all src files
